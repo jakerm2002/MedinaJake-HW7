@@ -4,6 +4,9 @@
 //
 //  Created by Jake Medina on 10/23/23.
 //
+//  Project: MedinaJake-HW7
+//  EID: jrm7784
+//  Course: CS371L
 
 import UIKit
 
@@ -13,12 +16,11 @@ class AddTimerViewController: UIViewController {
     @IBOutlet weak var locationTextField: UITextField!
     @IBOutlet weak var totalTimeTextField: UITextField!
     
+    // set by main VC, allows us to send back the new timer
     var delegate: UIViewController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
     
     @IBAction func saveButtonPressed(_ sender: Any) {

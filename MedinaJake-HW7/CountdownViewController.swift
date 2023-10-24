@@ -4,16 +4,23 @@
 //
 //  Created by Jake Medina on 10/23/23.
 //
+//  Project: MedinaJake-HW7
+//  EID: jrm7784
+//  Course: CS371L
 
 import UIKit
 
 class CountdownViewController: UIViewController {
 
-    var timer: Timer?
+    // will be set by main VC during segue
+    var timer: Timer!
     var timerIsRunning: Bool = false
     
-    var queue: DispatchQueue!
+    // set by main VC, allows us to send back the new timer
     var delegate: UIViewController!
+    var queue: DispatchQueue!
+    
+    // index of table view cell to update
     var tableViewIndex: Int!
     
     @IBOutlet weak var eventLabel: UILabel!
@@ -22,37 +29,36 @@ class CountdownViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        queue = DispatchQueue(label: "timerQueue", qos: .utility)
+        // high priority because we need the time displayed to be accurate
+        queue = DispatchQueue(label: "timerQueue", qos: .userInteractive)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if let timerObj = timer {
-            eventLabel.text = timerObj.event
-            locationLabel.text = timerObj.location
-            remainingTimeLabel.text = String(timerObj.remainingTime)
-        }
+        eventLabel.text = timer.event
+        locationLabel.text = timer.location
+        remainingTimeLabel.text = String(timer.remainingTime)
     }
     
+    // decrement timer and update UI
     func decrementTimer() {
-        if let timerObj = self.timer {
-            while self.timerIsRunning {
-                if timerObj.remainingTime > 0 {
-                    sleep(1)
-                    timerObj.remainingTime -= 1
-                    let newTime = String(timerObj.remainingTime)
-                    DispatchQueue.main.async {
-                        self.remainingTimeLabel.text = newTime
-                    }
-                } else {
-                    timerIsRunning = false
+        while self.timerIsRunning {
+            if self.timer.remainingTime > 0 {
+                sleep(1)
+                self.timer.remainingTime -= 1
+                let newTime = String(self.timer.remainingTime)
+                DispatchQueue.main.async {
+                    self.remainingTimeLabel.text = newTime
                 }
+            } else {
+                timerIsRunning = false
             }
         }
     }
     
+    // re–start timer
     override func viewDidAppear(_ animated: Bool) {
-        if let timerObj = timer, timerObj.remainingTime > 0 {
+        if timer.remainingTime > 0 {
             timerIsRunning = true
         }
         queue.async {
@@ -60,6 +66,7 @@ class CountdownViewController: UIViewController {
         }
     }
     
+    // stop timer on exit
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         timerIsRunning = false
